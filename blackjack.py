@@ -43,9 +43,45 @@ import General
 """
 
 
+class BJCard(General.Card):
+    def __init__(self, suit, number):
+        General.Card.__init__(self, suit, number)
+
+    def getValue(self):
+        numNumber = self.getNumNumber()
+        if numNumber > 9:
+            return 10
+        else:
+            return numNumber + 1
+
+    def __lt__(self, other):  # Makes it possible to sort cards according to their value
+        return self.getValue() > other.getValue()
+
+
+def value(hand):
+    total = 0
+    blackJack = 21
+    sortedCards = sorted(hand)  # Sorting an array of cards shouldn't take too long
+
+    index = 0
+    while index < len(sortedCards):
+        cardValue = sortedCards[index].getValue()
+        if cardValue == 1:  # Handle aces here
+            if index + 1 == len(sortedCards) and total + 11 <= blackJack:
+                total += 11
+            else:
+                total += 1
+        else:
+            total += cardValue
+
+        index += 1
+
+    return total
+
+
 class Dealer(General.CardContainer):
     def __init__(self):
-        General.CardContainer.__init__(self)
+        General.CardContainer.__init__(self, cardObject=BJCard)
 
     def show(self):
         hand = self.getCards()
@@ -71,13 +107,13 @@ def bet():
     while True:
         try:
             return int(input("How much do you want to bet? "))
-        except:
+        except:  # TODO fix
             print("bad value")
 
 
 class Player(General.CardContainer):
     def __init__(self):
-        General.CardContainer.__init__(self)
+        General.CardContainer.__init__(self, cardObject=BJCard)
 
     def play(self, deck):
         while True:
@@ -85,9 +121,9 @@ class Player(General.CardContainer):
             valueP = value(self.getCards())
             print("Calculated value: {}".format(valueP))
 
-            choice = input("Hit[h] or Stand[s]? ")
+            hitStandChoice = input("Hit[h] or Stand[s]? ").lower()
 
-            if choice.lower() == "h":
+            if hitStandChoice == "h":
                 deck.takeTopCard(self)
                 print("you got a", self.getCards()[-1].getName())
                 if value(self.getCards()) > 21:
@@ -96,7 +132,7 @@ class Player(General.CardContainer):
                 if value(self.getCards()) == 21:
                     print("Blackjack!")
                     break
-            elif choice.lower() == "s":
+            elif hitStandChoice == "s":
                 break
 
             else:
@@ -105,7 +141,7 @@ class Player(General.CardContainer):
 
 class Game:
     def __init__(self):
-        self.deck = General.Deck()
+        self.deck = General.Deck(cardObject=BJCard)
         self.deck.generateNewDeck()
 
     def play(self):
@@ -160,29 +196,21 @@ class Game:
             print("dealer wins")
 
 
-def value(hand):
-    total = 0
-    blackJack = 21
-    sortedCards = sorted(hand)  # Sorting an array of cards shouldn't take too long
-
-    index = 0
-    while index < len(sortedCards):
-        cardValue = sortedCards[index].getValue()
-        if cardValue == 1:  # Handle aces here
-            if index + 1 == len(sortedCards) and total + 11 <= blackJack:
-                total += 11
-            else:
-                total += 1
-        else:
-            total += cardValue
-
-        index += 1
-
-    return total
-
-
 if __name__ == "__main__":
     # execute only if run as a script
     # see https://docs.python.org/3/library/__main__.html
-    game = Game()
-    game.play()
+    play = True
+    while play:
+        Game().play()
+
+        while True:
+            # by convention capital letters mean default selection.
+            choice = input("Would you like to play again? Y/n?> ").lower()
+            if choice == "n":
+                play = False
+                break
+            elif choice == "y" or choice == "":
+                break
+
+            else:
+                print("Please select a valid option.")

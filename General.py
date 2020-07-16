@@ -22,17 +22,17 @@ class Card:
         return value
     """
 
-    def getValue(self):
-        if self.__number > 9:
-            return 10
-        else:
-            return self.__number + 1
-
-    def getNumber(self):
+    def getNumber(self):  # TODO: comment these
         return self.numbers[self.__number]
 
     def getSuit(self):
         return self.suits[self.__suit]
+
+    def getNumNumber(self):
+        return self.__number
+
+    def getNumSuit(self):
+        return self.__suit
 
     def getSymbolSuit(self):
         return self.suitsSymbol[self.__suit]
@@ -44,13 +44,14 @@ class Card:
         name = self.getNumber()
         return self.getSymbolSuit() + name
 
-    def __lt__(self, other):  # Makes it possible to sort cards according to their value
-        return self.getValue() > other.getValue()
+    def __lt__(self, other):
+        pass  # TODO: in order to sort cards, this method must be implemented.
 
     # read https://stackoverflow.com/questions/4932438/how-to-create-a-custom-string-representation-for-a-class-object
     def __str__(self):  # String representation of card
         return self.getShortName()
 
+    # read https://stackoverflow.com/questions/4932438/how-to-create-a-custom-string-representation-for-a-class-object
     def __repr__(self):
         return str(self)
 
@@ -60,18 +61,31 @@ class CardContainer:
 
     # We don't want the number of cards to be changed from the outside so the var is protected/private
 
-    def __init__(self, cards=None):
+    def __init__(self, cards=None, cardObject=None):
         if cards is None:
             cards = []
 
+        if cardObject is None and len(cards) != 0:
+            cardObject = cards[0].__class__
+
+        elif cardObject is None:
+            cardObject = Card  # TODO
+
         self.__cards = cards
         # We don't want the cards to be changed from the outside so the var is protected/private
+
+        self.__cardObject = cardObject
+        # Card obj is used for generating cards but also checking sure that different types of
+        # cards don't get mixed together
 
     def getCards(self):
         return self.__cards
 
     def addCard(self, card):
         self.__cardCounter += 1
+        # read https://pynative.com/python-isinstance-explained-with-examples/
+        if isinstance(card, self.__cardObject):
+            ValueError("Bad card type: " + str(type(card)))
         self.__cards.append(card)
 
     def removeCard(self, card):
@@ -88,12 +102,15 @@ class CardContainer:
     def numberOfCards(self):
         return self.__cardCounter
 
+    def getCardObject(self):
+        return self.__cardObject
+
 
 class Deck(CardContainer):
     from random import shuffle
 
-    def __init__(self, cards=None):
-        CardContainer.__init__(self, cards)
+    def __init__(self, cards=None, cardObject=None):
+        CardContainer.__init__(self, cards, cardObject)
 
     def shuffleDeck(self):
         self.shuffle(self.getCards())
@@ -101,4 +118,4 @@ class Deck(CardContainer):
     def generateNewDeck(self):
         for suit in range(4):
             for number in range(13):
-                self.addCard(Card(suit, number))
+                self.addCard(self.getCardObject()(suit, number))
