@@ -89,11 +89,12 @@ class Dealer(General.CardContainer):
 
     def play(self, deck):
         while value(self.getCards()) <= 16:
-            print("the dealer takes a card")
             deck.takeTopCard(self)
+            print("The dealer took a card. ({})".format(self.getCards()[-1].getShortName()))
+
 
         if value(self.getCards()) > 21:
-            print("dealer's gone bust")
+            print("Dealer's gone bust...")
 
 
 def cardArray(hand):
@@ -106,9 +107,9 @@ def cardArray(hand):
 def bet():
     while True:
         try:
-            return int(input("How much do you want to bet? "))
+            return int(input("\nHow much do you want to bet? £"))
         except:  # TODO fix
-            print("bad value")
+            print("Bad value, enter a number.")
 
 
 class Player(General.CardContainer):
@@ -119,13 +120,13 @@ class Player(General.CardContainer):
         while True:
             print("Your cards: {}".format(cardArray(self.getCards())))
             valueP = value(self.getCards())
-            print("Calculated value: {}".format(valueP))
+            print("Your calculated value: {} ".format(valueP))
 
-            hitStandChoice = input("Hit[h] or Stand[s]? ").lower()
+            hitStandChoice = input("\nHit[h] or Stand[s]? ").lower()
 
             if hitStandChoice == "h":
                 deck.takeTopCard(self)
-                print("you got a", self.getCards()[-1].getName())
+                print("You got a", self.getCards()[-1].getShortName())
                 if value(self.getCards()) > 21:
                     print("Sorry, you've gone bust.")
                     break
@@ -136,7 +137,7 @@ class Player(General.CardContainer):
                 break
 
             else:
-                print("bad input")
+                print("Bad input, you must enter 'h' or 's'.")
 
 
 class Game:
@@ -163,49 +164,50 @@ class Game:
         dealerValue = value(dealer.getCards())
         playerValue = value(player.getCards())
 
-        print("=" * 10)
+        print( "\n"+"=" * 20)
         print("The dealer has:")
         for card in dealer.getCards():
             print(card.getName())
 
-        print("=" * 10)
+        print("=" * 20)
 
         print("You have:")
         for card in player.getCards():
             print(card.getName())
 
-        print("=" * 10)
-        print("")
-        print("the dealer's value:", dealerValue)
-        print("your value: ", playerValue)
-        print("the player bet:", playerBet)
+        print("=" * 20, "\n")
+        # print("")
+        print("The dealer's value:", dealerValue)
+        print("Your value: ", playerValue)
+        print("The player bet:", playerBet)
 
         if playerValue > 21:
-            print("player loses")
+            print("Player loses.")
 
         elif dealerValue > 21:
-            print("dealer loses, player wins")
+            print("Dealer loses, Player wins.")
 
         elif playerValue == dealerValue:
-            print("dealer pushes, draw")
+            print("Dealer pushes, draw.")
 
         elif playerValue > dealerValue:
-            print("player wins")
+            print("Player wins.")
 
         else:  # playerValue < dealerValue:
-            print("dealer wins")
+            print("Dealer wins.")
 
 
 if __name__ == "__main__":
     # execute only if run as a script
     # see https://docs.python.org/3/library/__main__.html
     play = True
+    print("Blackjack")
     while play:
         Game().play()
 
         while True:
             # by convention capital letters mean default selection.
-            choice = input("Would you like to play again? Y/n?> ").lower()
+            choice = input("\nWould you like to play again ? [Y/n] ").lower()
             if choice == "n":
                 play = False
                 break

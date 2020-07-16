@@ -1,3 +1,6 @@
+from time import sleep
+
+
 class Card:
     suits = ["Diamonds", "Clubs", "Hearts", "Spades"]
     numbers = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"]
@@ -119,3 +122,11 @@ class Deck(CardContainer):
         for suit in range(4):
             for number in range(13):
                 self.addCard(self.getCardObject()(suit, number))
+
+
+#Typewriter function# =====================================================
+def typePrint(strType):
+    for char in strType:
+        sleep(0.05)
+        print(char, end='')
+    print("\n")
