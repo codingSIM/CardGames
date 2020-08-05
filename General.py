@@ -98,6 +98,9 @@ class CardContainer:
     def takeTopCard(self, destination):
         self.moveCard(self.__cards[-1], destination)
 
+    def takeBottomCard(self, destination):
+        self.moveCard(self.__cards[0], destination)
+
     def moveCard(self, card, destination):
         self.removeCard(card)
         destination.addCard(card)
