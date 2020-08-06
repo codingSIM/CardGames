@@ -128,3 +128,7 @@ dmypy.json
 .idea/misc.xml
 .idea/modules.xml
 .idea/vcs.xml
+.idea/CardGames.iml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/workspace.xml
+/idea
